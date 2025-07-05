@@ -1,4 +1,4 @@
-package miyucomics.hexcassettes.client
+package com.proton.rubenhuizenga.hexcassettes.client
 
 import at.petrak.hexcasting.api.casting.math.HexPattern
 

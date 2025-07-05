@@ -1,25 +1,26 @@
-package miyucomics.hexcassettes.patterns
+package com.proton.rubenhuizenga.hexcassettes.patterns
 
 import at.petrak.hexcasting.api.casting.RenderedSpell
 import at.petrak.hexcasting.api.casting.castables.SpellAction
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironment
 import at.petrak.hexcasting.api.casting.eval.env.PlayerBasedCastEnv
+import at.petrak.hexcasting.api.casting.getPattern
 import at.petrak.hexcasting.api.casting.iota.Iota
+import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.api.casting.mishaps.MishapBadCaster
-import miyucomics.hexcassettes.PlayerEntityMinterface
-import net.minecraft.server.network.ServerPlayerEntity
+import com.proton.rubenhuizenga.hexcassettes.PlayerMinterface
 
-class OpKillAll : SpellAction {
-	override val argc = 0
+class OpDequeue : SpellAction {
+	override val argc = 1
 	override fun execute(args: List<Iota>, env: CastingEnvironment): SpellAction.Result {
 		if (env !is PlayerBasedCastEnv)
 			throw MishapBadCaster()
-		return SpellAction.Result(Spell(env.castingEntity as ServerPlayerEntity), 0, listOf())
+		return SpellAction.Result(Spell(args.getPattern(0, argc)), 0, listOf())
 	}
 
-	private data class Spell(val caster: ServerPlayerEntity) : RenderedSpell {
+	private data class Spell(val pattern: HexPattern) : RenderedSpell {
 		override fun cast(env: CastingEnvironment) {
-			(env.castingEntity as PlayerEntityMinterface).getCassetteState().queuedHexes.clear()
+			(env.castingEntity as PlayerMinterface).getCassetteState().queuedHexes.remove(pattern)
 		}
 	}
 }

@@ -1,11 +1,14 @@
 {
 	"required": true,
-	"package": "miyucomics.hexcassettes.mixin",
+	"package": "com.proton.rubenhuizenga.hexcassettes.mixin",
 	"compatibilityLevel": "JAVA_17",
-	"minVersion": "0.8",
+	"refmap": "META-INF/hexcassettes-refmap.json", 
+	"minVersion": "0.8.5",
 	"mixins": [
-		"PlayerEntityMixin"
+		"PlayerMixin"
 	],
+	"client": [],
+	"server": [],
 	"injectors": {
 		"defaultRequire": 1
 	}

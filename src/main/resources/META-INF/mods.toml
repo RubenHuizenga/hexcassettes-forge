@@ -1,0 +1,31 @@
+modLoader="kotlinforforge" # or "javafml" depending on your Kotlin setup
+loaderVersion="[1,)"
+license="MIT"
+[[mods]]
+modId="hexcassettes"
+version="${file.jarVersion}"
+displayName="Hexcassettes (Forge)"
+description="An addon for all your daemon and delaying needs! Unofficial Forge port"
+authors="Ruben Huizenga (Original by miyucomics)"
+logoFile="assets/hexcassettes/icon.png"
+
+[[dependencies.hexcassettes]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47.1.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hexcassettes]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hexcassettes]]
+    modId="hexcasting"
+    mandatory=true
+    versionRange="[0.11.2,)"
+    ordering="NONE"
+    side="BOTH"

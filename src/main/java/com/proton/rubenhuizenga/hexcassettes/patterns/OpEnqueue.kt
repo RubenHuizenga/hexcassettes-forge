@@ -1,4 +1,4 @@
-package miyucomics.hexcassettes.patterns
+package com.proton.rubenhuizenga.hexcassettes.patterns
 
 import at.petrak.hexcasting.api.casting.castables.Action
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironment
@@ -19,22 +19,22 @@ import at.petrak.hexcasting.api.casting.mishaps.MishapBadCaster
 import at.petrak.hexcasting.api.casting.mishaps.MishapInvalidIota
 import at.petrak.hexcasting.api.casting.mishaps.MishapNotEnoughArgs
 import at.petrak.hexcasting.common.lib.hex.HexEvalSounds
-import miyucomics.hexcassettes.CassetteCastEnv
-import miyucomics.hexcassettes.HexcassettesMain
-import miyucomics.hexcassettes.PlayerEntityMinterface
-import miyucomics.hexcassettes.data.QueuedHex
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.DyeColor
+import com.proton.rubenhuizenga.hexcassettes.CassetteCastEnv
+import com.proton.rubenhuizenga.hexcassettes.HexcassettesMain
+import com.proton.rubenhuizenga.hexcassettes.PlayerMinterface
+import com.proton.rubenhuizenga.hexcassettes.data.QueuedHex
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.DyeColor
 
 class OpEnqueue : Action {
 	override fun operate(env: CastingEnvironment, image: CastingImage, continuation: SpellContinuation): OperationResult {
 		if (env !is PlayerBasedCastEnv)
 			throw MishapBadCaster()
 		if (env is CassetteCastEnv)
-			HexcassettesMain.QUINE.trigger(env.castingEntity as ServerPlayerEntity)
+			HexcassettesMain.QUINE.trigger(env.castingEntity as ServerPlayer)
 		if (image.stack.size < 2)
 			throw MishapNotEnoughArgs(2, image.stack.size)
-		val cassetteState = (env.castingEntity as PlayerEntityMinterface).getCassetteState()
+		val cassetteState = (env.castingEntity as PlayerMinterface).getCassetteState()
 
 		val stack = image.stack.toMutableList()
 		val delay = stack.removeAt(stack.lastIndex)
@@ -44,7 +44,7 @@ class OpEnqueue : Action {
 
 		when (val next = stack.removeAt(stack.lastIndex)) {
 			is ListIota -> {
-				val index = if (env is CassetteCastEnv) env.pattern else EulerPathFinder.findAltDrawing(HexPattern.fromAngles("qeqwqwqwqwqeqaweqqqqqwweeweweewqdwwewewwewweweww", HexDir.EAST), env.world.time)
+				val index = if (env is CassetteCastEnv) env.pattern else EulerPathFinder.findAltDrawing(HexPattern.fromAngles("qeqwqwqwqwqeqaweqqqqqwweeweweewqdwwewewwewweweww", HexDir.EAST), env.world.gameTime)
 				if (cassetteState.queuedHexes.keys.size >= HexcassettesMain.MAX_CASSETTES)
 					throw NoFreeCassettes()
 				cassetteState.queuedHexes[index] = QueuedHex(IotaType.serialize(next), delayValue)
@@ -69,17 +69,17 @@ class OpEnqueue : Action {
 }
 
 class NoFreeCassettes : Mishap() {
-	override fun accentColor(env: CastingEnvironment, errorCtx: Context) = dyeColor(DyeColor.RED)
-	override fun errorMessage(env: CastingEnvironment, errorCtx: Context) = error(HexcassettesMain.MOD_ID + ":no_free_cassettes")
+	override fun accentColor(ctx: CastingEnvironment, errorCtx: Context) = dyeColor(DyeColor.RED)
+	override fun errorMessage(ctx: CastingEnvironment, errorCtx: Context) = error(HexcassettesMain.MOD_ID + ":no_free_cassettes")
 	override fun execute(env: CastingEnvironment, errorCtx: Context, stack: MutableList<Iota>) {}
 }
 
 class NotEnoughCassettes : Mishap() {
-	override fun accentColor(env: CastingEnvironment, errorCtx: Context) = dyeColor(DyeColor.RED)
-	override fun errorMessage(env: CastingEnvironment, errorCtx: Context) = error(HexcassettesMain.MOD_ID + ":not_enough_cassettes")
+	override fun accentColor(ctx: CastingEnvironment, errorCtx: Context) = dyeColor(DyeColor.RED)
+	override fun errorMessage(ctx: CastingEnvironment, errorCtx: Context) = error(HexcassettesMain.MOD_ID + ":not_enough_cassettes")
 	override fun execute(env: CastingEnvironment, errorCtx: Context, stack: MutableList<Iota>) {
 		val caster = env.castingEntity
-		if (caster is ServerPlayerEntity)
-			(caster as PlayerEntityMinterface).getCassetteState().queuedHexes.clear()
+		if (caster is ServerPlayer)
+			(caster as PlayerMinterface).getCassetteState().queuedHexes.clear()
 	}
 }

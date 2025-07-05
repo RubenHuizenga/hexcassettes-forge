@@ -1,4 +1,4 @@
-package miyucomics.hexcassettes
+package com.proton.rubenhuizenga.hexcassettes
 
 import at.petrak.hexcasting.api.casting.ParticleSpray
 import at.petrak.hexcasting.api.casting.eval.env.PlayerBasedCastEnv
@@ -6,12 +6,11 @@ import at.petrak.hexcasting.api.casting.eval.sideeffects.OperatorSideEffect.DoMi
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.api.pigment.FrozenPigment
 import at.petrak.hexcasting.xplat.IXplatAbstractions
-import net.minecraft.entity.damage.DamageSource
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.Hand
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.InteractionHand
 
-class CassetteCastEnv(caster: ServerPlayerEntity, castingHand: Hand, val pattern: HexPattern) : PlayerBasedCastEnv(caster, castingHand) {
-	override fun getCastingHand(): Hand = this.castingHand
+class CassetteCastEnv(caster: ServerPlayer, castingHand: InteractionHand, val pattern: HexPattern) : PlayerBasedCastEnv(caster, castingHand) {
+	override fun getCastingHand(): InteractionHand = this.castingHand
 	override fun produceParticles(particles: ParticleSpray, pigment: FrozenPigment) {}
 	override fun getPigment(): FrozenPigment = IXplatAbstractions.INSTANCE.getPigment(this.caster)
 
